@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
-import geopy
-from pyzipcode import ZipCodeDatabase
-from geopy.distance import great_circle
+import pgeocode
+from geopy.distance import geodesic
 import uvicorn
 
 app = FastAPI()
@@ -10,27 +9,10 @@ app = FastAPI()
 BEACON_ZIP = '94104'  # Define your main ZIP code
 RADIUS_MILES = 50  # Radius limit in miles
 
-def getdistance(zipcode1, zipcode2, measure="miles"):
-    zcdb = ZipCodeDatabase()
-    
-    ## get long/lat for zipcodes
-    long1 = zcdb[zipcode1].longitude
-    lat1 = zcdb[zipcode1].latitude
-    long2 = zcdb[zipcode2].longitude
-    lat2 = zcdb[zipcode2].latitude
-    
-    ## create coordinates for zipcodes
-    zip1 = (lat1, long1)
-    zip2 = (lat2, long2)
-    
-    ## calculate distance
-    distance = great_circle(zip1, zip2)
-    
-    ## print
-    if measure == "miles":
-        return distance.miles
-    else:
-        return distance.km
+def getdistance(zip1, zip2, country="US"):
+    nomi = pgeocode.Nominatim(country)
+    loc1, loc2 = nomi.query_postal_code(zip1), nomi.query_postal_code(zip2)
+    return geodesic((loc1.latitude, loc1.longitude), (loc2.latitude, loc2.longitude)).miles
 
 
 @app.post("/process-data")
