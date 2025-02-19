@@ -7,7 +7,7 @@ import uvicorn
 app = FastAPI()
 
 
-BEACON_ZIP = 94104  # Define your main ZIP code
+BEACON_ZIP = '94104'  # Define your main ZIP code
 RADIUS_MILES = 50  # Radius limit in miles
 
 def getdistance(zipcode1, zipcode2, measure="miles"):
@@ -39,7 +39,7 @@ async def process_data(request: Request):
         data = await request.json() #contains a bunch, including transcript
         data = data.get("args")
         age = int(data.get("age"))
-        zip_code = int(data.get("zip"))
+        zip_code = str(data.get("zip"))
         alz = data.get("alz")
         try:
             distance = getdistance(BEACON_ZIP, zip_code)
