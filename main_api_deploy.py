@@ -8,7 +8,8 @@ app = FastAPI()
 
 BEACON_ZIP = '94104'  # Define your main ZIP code
 RADIUS_MILES = 50  # Radius limit in miles
-
+NUMBER2NAME_DICT = {"+19254759601":"Zarif Azher",
+                    "+16502235434":"Sohit"}
 def getdistance(zip1, zip2, country="US"):
     nomi = pgeocode.Nominatim(country)
     loc1, loc2 = nomi.query_postal_code(zip1), nomi.query_postal_code(zip2)
@@ -46,8 +47,7 @@ async def process_data(request: Request):
         return {"message": "Invalid request"}, 400
     
 
-NUMBER2NAME_DICT = {"+19254759600":"Zarif Azher",
-                    "+16502235434":"Sohit"}
+
 @app.post("/namehook")
 async def name_webhook(request: Request):
     try:
